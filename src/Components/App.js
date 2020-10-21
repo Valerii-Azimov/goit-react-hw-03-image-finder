@@ -27,10 +27,13 @@ export default class App extends Component {
       // console.log("ok");
       this.fetchImages(nextQuery);
     }
-    window.scrollTo({
-      top: document.documentElement.scrollHeight,
-      behavior: "smooth",
-    });
+
+    if (prevState !== this.images) {
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: "smooth",
+      });
+    }
   }
 
   fetchImages = () => {
@@ -53,7 +56,7 @@ export default class App extends Component {
   };
 
   handleSearchFormSubmit = (query) => {
-    this.setState({ searchQuery: query, page: 1, images: [] });
+    this.setState({ searchQuery: query.trim(), page: 1, images: [] });
   };
   // axios
   //   .get(
@@ -81,16 +84,15 @@ export default class App extends Component {
         <Searchbar onSubmit={this.handleSearchFormSubmit} />
         {error && <p>Whoops, something went wrong</p>}
 
-        {loading ? (
-          // <div>Loading...</div>
-          <Loader />
-        ) : (
+        {images.length > 0 && (
           <ImageGallery
             images={images}
             toggleModal={this.toggleModal}
             handleLargeFoto={this.handleLargeFoto}
           ></ImageGallery>
         )}
+
+        {loading && <Loader />}
         {images.length > 0 && !loading && (
           <ButtonLoadMore fetchImages={this.fetchImages} />
         )}
